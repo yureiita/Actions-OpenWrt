@@ -15,5 +15,5 @@
 
 #luci-theme-argon and luci-app-argon-config
 cd package
-https://github.com/jerrykuku/luci-theme-argon.git
+git clone https://github.com/jerrykuku/luci-theme-argon.git
 git clone https://github.com/jerrykuku/luci-app-argon-config.git
