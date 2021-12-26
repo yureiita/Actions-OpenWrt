@@ -1,0 +1,7 @@
+uci -q batch << EOI
+del wireless.radio0.disabled
+del wireless.default_radio0.disabled
+del wireless.radio1.disabled
+del wireless.default_radio1.disabled
+commit wireless
+EOI
