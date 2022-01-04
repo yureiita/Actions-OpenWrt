@@ -20,7 +20,7 @@ on:
         default: 'false'
 
 env:
-  REPO_URL: https://gitlab.com/db260179/openwrt-base.git
+  REPO_URL: https://github.com/yureiita/openwrt.git
   REPO_BRANCH: openwrt-21.02-mt7621
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: m4a.config
