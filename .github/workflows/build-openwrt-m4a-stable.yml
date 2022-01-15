@@ -122,12 +122,14 @@ jobs:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: openwrt/bin
 
-    - name: Upload log file
+    - name: Upload logs
       uses: actions/upload-artifact@main
       if: (!cancelled())
       with:
         name: OpenWrt_log${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: '**/*.log'
+        path: |
+            openwrt/logs
+            openwrt*/*.log
 
     - name: Organize files
       id: organize
