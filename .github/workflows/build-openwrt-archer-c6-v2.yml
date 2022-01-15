@@ -27,7 +27,6 @@ env:
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: true
-  UPLOAD_LOG_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
@@ -125,12 +124,17 @@ jobs:
 
     - name: Upload log directory
       uses: actions/upload-artifact@main
-      if: env.UPLOAD_LOG_DIR == 'true' && !cancelled()
+      if: (!cancelled())
+      with:
+        name: OpenWrt_logs${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: openwrt/logs
+
+    - name: Upload log file
+      uses: actions/upload-artifact@main
+      if: (!cancelled())
       with:
         name: OpenWrt_log${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: |
-          openwrt/build.log
-          openwrt/logs
+        path: openwrt/*.log
 
     - name: Organize files
       id: organize
