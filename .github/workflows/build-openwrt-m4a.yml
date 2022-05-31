@@ -20,8 +20,8 @@ on:
         default: 'false'
 
 env:
-  REPO_URL: https://github.com/yureiita/openwrt.git
-  REPO_BRANCH: openwrt-21.02-mt7621
+  REPO_URL: https://github.com/openwrt/openwrt.git
+  REPO_BRANCH: openwrt-22.03
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: m4a.config
   DIY_P1_SH: diy-part1.sh
@@ -31,7 +31,7 @@ env:
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
-  RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 21.02-SNAPSHOT from https://github.com/yureiita/openwrt/tree/openwrt-21.02-mt7621. (Flow control disabled & ipv6 hw offloading support)"
+  RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 22.03-SNAPSHOT from https://github.com/openwrt/openwrt/tree/openwrt-22.03."
   RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-wolfssl, adblock, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, luci-theme-argon, luci-lib-ipkg, curl, nano."
   TZ: Asia/Brunei
 
