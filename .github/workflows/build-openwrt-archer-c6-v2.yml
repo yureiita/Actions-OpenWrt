@@ -32,7 +32,7 @@ env:
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
   RELEASE_DEVICE: "Archer C6 v2 22.03.0-rc5 from https://github.com/openwrt/openwrt/tree/tag/v22.03.0-rc5."
-  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-wolfssl, ath10k-firmware-qca9888-ct-full-htt, curl, nano."
+  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-wolfssl, kmod-ath10k-ct-smallbuffers, ath10k-firmware-qca9888-ct-full-htt, curl, nano."
   TZ: Asia/Brunei
 
 jobs:
