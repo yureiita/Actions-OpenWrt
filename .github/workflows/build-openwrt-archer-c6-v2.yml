@@ -21,7 +21,7 @@ on:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: v22.03.0
+  REPO_BRANCH: v22.03.1
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: archer-c6-v2.config
   DIY_P1_SH: diy-part1.sh
@@ -31,7 +31,7 @@ env:
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
-  RELEASE_DEVICE: "Archer C6 v2 22.03.0 from https://github.com/openwrt/openwrt/tree/v22.03.0."
+  RELEASE_DEVICE: "Archer C6 v2 22.03.1 from https://github.com/openwrt/openwrt/tree/v22.03.1."
   RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-wolfssl, ath10k-firmware-qca9888-ct-full-htt."
   TZ: Asia/Brunei
 
