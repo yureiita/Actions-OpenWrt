@@ -32,7 +32,7 @@ env:
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
   RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 22.03.0 from https://github.com/openwrt/openwrt/tree/v22.03.0."
-  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-wolfssl, adblock, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, luci-theme-argon, luci-lib-ipkg, curl, nano."
+  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-wolfssl, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, luci-theme-argon, luci-lib-ipkg, curl, nano."
   TZ: Asia/Brunei
 
 jobs:
