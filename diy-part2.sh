@@ -14,6 +14,6 @@
 #sed -i 's/192.168.1.1/192.168.50.5/g' package/base-files/files/bin/config_generate
 
 #luci-theme-argon and luci-app-argon-config
-cd package
-git clone https://github.com/jerrykuku/luci-theme-argon.git
-git clone https://github.com/jerrykuku/luci-app-argon-config.git
+# cd package
+# git clone https://github.com/jerrykuku/luci-theme-argon.git
+# git clone https://github.com/jerrykuku/luci-app-argon-config.git
