@@ -21,7 +21,7 @@ on:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: v22.03.3
+  REPO_BRANCH: v23.05.0-rc3
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: m4a.config
   DIY_P1_SH: diy-part1.sh
@@ -31,8 +31,8 @@ env:
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
-  RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 22.03.3 from https://github.com/openwrt/openwrt/tree/v22.03.3."
-  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-wolfssl, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, curl, nano."
+  RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 23.05.0-rc3 from https://github.com/openwrt/openwrt/tree/v23.05.0-rc3."
+  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-mbedtls, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, curl, nano."
   TZ: Asia/Brunei
 
 jobs:
