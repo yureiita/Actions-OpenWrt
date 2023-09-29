@@ -8,12 +8,20 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build OpenWrt Mi 4A Gigabit
+name: Build OpenWrt Cache
 
 on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
+      config-file:
+        description: 'Config file'
+        required: false
+        default: 'm4a-snapshot'
+      repo-branch:
+        description: 'Repo branch'
+        required: false
+        default: 'openwrt-23.05'
       clean-cache:
         description: 'Clean cache'
         required: false
@@ -22,25 +30,14 @@ on:
         description: 'Skip the compilation of toolchain'
         required: false
         default: 'false'
-      ssh:
-        description: 'SSH connection to Actions'
-        required: false
-        default: 'false'
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: v23.05.0-rc3
+  REPO_BRANCH: ${{ github.event.inputs.repo-branch || 'openwrt-23.05' }}
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: m4a.config
+  CONFIG_FILE: ${{ github.event.inputs.config-file || 'm4a-snapshot' }}.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  UPLOAD_BIN_DIR: true
-  UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: false
-  UPLOAD_WETRANSFER: false
-  UPLOAD_RELEASE: true
-  RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 23.05.0-rc3 from https://github.com/openwrt/openwrt/tree/v23.05.0-rc3."
-  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-mbedtls, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, curl, nano."
   TZ: Asia/Brunei
 
 jobs:
@@ -115,13 +112,6 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: SSH connection to Actions
-      uses: P3TERX/ssh2actions@v1.0.0
-      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-      env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-
     - name: Download package
       id: package
       run: |
@@ -136,22 +126,13 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(($(nproc)+1)) thread compile"
-        { make -j$(($(nproc)+1)) | tee build.log ; } || { make -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee verbose.log | grep -i -E "^make.*(error|[12345]...Entering dir)" ; }
+        { make tools/install -j$(($(nproc)+1)) | tee build.log ; } || { make tools/install -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee verbose.log | grep -i -E "^make.*(error|[12345]...Entering dir)" ; }
+        { make toolchain/install -j$(($(nproc)+1)) | tee build.log ; } || { make toolchain/install -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee verbose.log | grep -i -E "^make.*(error|[12345]...Entering dir)" ; }
         echo "status=success" >> $GITHUB_OUTPUT
-        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
-        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
-        echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
     - name: Check space usage
       if: (!cancelled())
       run: df -hT
-
-    - name: Upload bin directory
-      uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
-      with:
-        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: openwrt/bin
 
     - name: Upload logs
       uses: actions/upload-artifact@main
@@ -162,73 +143,9 @@ jobs:
             openwrt/logs
             openwrt*/*.log
 
-    - name: Organize files
-      id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
-      run: |
-        cd openwrt/bin/targets/*/*
-        rm -rf packages
-        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        echo "status=success" >> $GITHUB_OUTPUT
-
-    - name: Upload firmware directory
-      uses: actions/upload-artifact@main
-      if: steps.organize.outputs.status == 'success' && !cancelled()
-      with:
-        name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: ${{ env.FIRMWARE }}
-
-    - name: Upload firmware to cowtransfer
-      id: cowtransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "url=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_OUTPUT
-
-    - name: Upload firmware to WeTransfer
-      id: wetransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-        echo "url=$(cat wetransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_OUTPUT
-
-    - name: Generate release tag
-      id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      run: |
-        echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
-        touch release.txt
-        echo $RELEASE_DEVICE$'\n\n'$RELEASE_PACKAGE >> release.txt
-        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
-        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
-        echo "status=success" >> $GITHUB_OUTPUT
-
-    - name: Upload firmware to release
-      uses: softprops/action-gh-release@v1
-      if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.tag.outputs.release_tag }}
-        body_path: release.txt
-        files: ${{ env.FIRMWARE }}/*
-
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@v2.0.4
       with:
         retain_days: 90
         keep_minimum_runs: 3
         delete_workflow_pattern: ${{ github.workflow }}
-
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.2.1
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 10
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

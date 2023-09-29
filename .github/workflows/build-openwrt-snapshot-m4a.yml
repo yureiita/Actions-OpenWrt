@@ -14,6 +14,14 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
+      clean-cache:
+        description: 'Clean cache'
+        required: false
+        default: 'false'
+      skip-toolchain:
+        description: 'Skip the compilation of toolchain'
+        required: false
+        default: 'false'
       ssh:
         description: 'SSH connection to Actions'
         required: false
@@ -77,6 +85,14 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
+    - name: Cache
+      uses: stupidloud/cachewrtbuild@main
+      with:
+        ccache: 'true'
+        clean: ${{ github.event.inputs.clean-cache }}
+        skip: ${{ github.event.inputs.skip-toolchain }}
+        prefix: ${{ github.workspace }}/openwrt
 
     - name: Load custom feeds
       run: |
