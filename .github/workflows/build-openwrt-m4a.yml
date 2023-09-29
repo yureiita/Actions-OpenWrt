@@ -120,7 +120,7 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(($(nproc)+1)) thread compile"
-        make -j$(($(nproc)+1)) || make -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee build.log | grep -i -E "^make.*(error|[12345]...Entering dir)"
+        { make -j$(($(nproc)+1)) | tee build.log ; } || { make -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee verbose.log | grep -i -E "^make.*(error|[12345]...Entering dir)" ; }
         echo "status=success" >> $GITHUB_OUTPUT
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
@@ -204,14 +204,15 @@ jobs:
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@v2.0.4
       with:
-        retain_days: 1
+        retain_days: 90
         keep_minimum_runs: 3
+        delete_workflow_pattern: ${{ github.workflow }}
 
     - name: Remove old Releases
       uses: dev-drprasad/delete-older-releases@v0.2.1
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-        keep_latest: 6
+        keep_latest: 10
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
