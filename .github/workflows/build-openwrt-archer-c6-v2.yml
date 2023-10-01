@@ -86,13 +86,35 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
+    - name: Create cache key
+      run: |
+        cd openwrt
+        echo "cache-openwrt-$(git log --pretty=tformat:"%h" -n1 -- tools toolchain)" > RESTORE_KEY
+        echo "RESTORE_KEY=$(cat RESTORE_KEY)" >> $GITHUB_ENV
+        echo "CACHE_KEY=$(cat RESTORE_KEY)-$(date +"%s")" >> $GITHUB_ENV
+
     - name: Cache
-      uses: stupidloud/cachewrtbuild@main
+      uses: actions/cache@v3
       with:
-        ccache: 'true'
-        clean: ${{ github.event.inputs.clean-cache }}
-        skip: ${{ github.event.inputs.skip-toolchain }}
-        prefix: ${{ github.workspace }}/openwrt
+        path: |
+          ${{ github.workspace }}/openwrt/staging_dir/host*
+          ${{ github.workspace }}/openwrt/staging_dir/tool*
+          ${{ github.workspace }}/openwrt/.ccache
+        key: ${{ env.CACHE_KEY }}
+        restore-keys: |
+          ${{ env.RESTORE_KEY }}-
+          cache-openwrt-
+
+    - name: Clean cache
+      if: github.event.inputs.clean-cache == 'true' && !cancelled()
+      run: make distclean
+
+    - name: Skip toolchain
+      if: github.event.inputs.skip-toolchain == 'true' && !cancelled()
+      run: |
+        cd openwrt
+        sed -i 's/ $(tool.*\\/stamp-compile)//;' Makefile
+        sed -i 's/ $(tool.*\\/stamp-install)//;' Makefile
 
     - name: Load custom feeds
       run: |
