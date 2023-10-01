@@ -170,6 +170,6 @@ jobs:
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@v2.0.4
       with:
-        retain_days: 90
+        retain_days: 1
         keep_minimum_runs: 3
         delete_workflow_pattern: ${{ github.workflow }}
