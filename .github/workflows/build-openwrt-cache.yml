@@ -127,8 +127,8 @@ jobs:
         cd openwrt
         echo -e "$(($(nproc)+1)) thread compile"
         set -o pipefail
-        { make tools/install -j$(($(nproc)+1)) || make tools/install -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y ; } 2>&1 | tee build.log | grep -i -E "^make.*(error|[12345]...Entering dir|'conf'|s/config'|world)|^ make|^ +error"
-        { make toolchain/install -j$(($(nproc)+1)) || make toolchain/install -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y ; } 2>&1 | tee build.log | grep -i -E "^make.*(error|[12345]...Entering dir|'conf'|s/config'|world)|^ make|^ +error"
+        { make tools/install -j$(($(nproc)+1)) | tee build.log ; } || { make tools/install -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee verbose.log | grep -i -E "^make.*(error|[12345]...Entering dir)" ; }
+        { make toolchain/install -j$(($(nproc)+1)) | tee build.log ; } || { make toolchain/install -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee verbose.log | grep -i -E "^make.*(error|[12345]...Entering dir)" ; }
         set +o pipefail
         echo "status=success" >> $GITHUB_OUTPUT
 
