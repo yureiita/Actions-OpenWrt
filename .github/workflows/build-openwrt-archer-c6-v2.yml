@@ -113,8 +113,8 @@ jobs:
       if: github.event.inputs.skip-toolchain == 'true' && !cancelled()
       run: |
         cd openwrt
-        sed -i 's/ $(tool.*\\/stamp-compile)//;' Makefile
-        sed -i 's/ $(tool.*\\/stamp-install)//;' Makefile
+        sed -i 's/ $(tool.*\/stamp-compile)//;' Makefile
+        sed -i 's/ $(tool.*\/stamp-install)//;' Makefile
 
     - name: Load custom feeds
       run: |
