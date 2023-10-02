@@ -86,12 +86,12 @@ jobs:
     - name: Create cache key
       run: |
         cd openwrt
-        echo "cache-openwrt-$(git log --pretty=tformat:"%h" -n1 -- tools toolchain)" > RESTORE_KEY
-        echo "RESTORE_KEY=$(cat RESTORE_KEY)" >> $GITHUB_ENV
-        echo "CACHE_KEY=$(cat RESTORE_KEY)-$(date +"%s")" >> $GITHUB_ENV 
+        echo "CACHE_KEY=cache-openwrt-$(git log --pretty=tformat:"%h" -n1 -- tools toolchain)" >> $GITHUB_ENV
 
-    - name: Cache
-      uses: actions/cache@v3
+    - name: Restore cache
+      uses: actions/cache/restore@v3
+      id: restore-cache
+      if: github.event.inputs.clean-cache == 'false' && !cancelled()
       with:
         path: |
           ${{ github.workspace }}/openwrt/staging_dir/host*
@@ -99,12 +99,7 @@ jobs:
           ${{ github.workspace }}/openwrt/.ccache
         key: ${{ env.CACHE_KEY }}
         restore-keys: |
-          ${{ env.RESTORE_KEY }}-
           cache-openwrt-
-
-    - name: Clean cache
-      if: github.event.inputs.clean-cache == 'true' && !cancelled()
-      run: make distclean
 
     - name: Skip toolchain
       if: github.event.inputs.skip-toolchain == 'true' && !cancelled()
@@ -153,6 +148,26 @@ jobs:
         { make toolchain/install -j$(($(nproc)+1)) | tee build.log ; } || { make toolchain/install -j1 V=s CONFIG_DEBUG_SECTION_MISMATCH=y 2>&1 | tee verbose.log | grep -i -E "^make.*(error|[12345]...Entering dir)" ; }
         set +o pipefail
         echo "status=success" >> $GITHUB_OUTPUT
+
+    # overwrite cache key: delete previous and save current
+    - name: Delete Previous Cache
+      if: ${{ steps.restore-cache.outputs.cache-hit }}
+      continue-on-error: true
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh extension install actions/gh-actions-cache
+        gh actions-cache delete "${{ steps.restore-cache.outputs.cache-primary-key }}" --confirm
+
+    - name: Save cache
+      uses: actions/cache/save@v3
+      if: always()
+      with:
+        path: |
+          ${{ github.workspace }}/openwrt/staging_dir/host*
+          ${{ github.workspace }}/openwrt/staging_dir/tool*
+          ${{ github.workspace }}/openwrt/.ccache
+        key: ${{ steps.restore-cache.outputs.cache-primary-key }}
 
     - name: Check space usage
       if: (!cancelled())
