@@ -40,7 +40,7 @@ env:
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
   RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 23.05-SNAPSHOT from https://github.com/openwrt/openwrt/tree/openwrt-23.05."
-  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-mbedtls, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, curl, nano."
+  RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-mbedtls, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, curl, nano, umdns, rrm-nr-distributor."
   TZ: Asia/Brunei
 
 jobs:
