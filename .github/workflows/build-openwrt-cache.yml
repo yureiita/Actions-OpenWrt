@@ -89,7 +89,7 @@ jobs:
         echo "CACHE_KEY=cache-openwrt-$(git log --pretty=tformat:"%h" -n1 -- tools toolchain)" >> $GITHUB_ENV
 
     - name: Restore cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: restore-cache
       if: github.event.inputs.clean-cache == 'false' && !cancelled()
       with:
@@ -160,7 +160,7 @@ jobs:
         gh actions-cache delete "${{ steps.restore-cache.outputs.cache-primary-key }}" --confirm
 
     - name: Save cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       if: always()
       with:
         path: |

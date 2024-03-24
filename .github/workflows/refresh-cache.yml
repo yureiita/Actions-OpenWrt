@@ -70,7 +70,7 @@ jobs:
         echo "CACHE_KEY=cache-openwrt-$(git log --pretty=tformat:"%h" -n1 -- tools toolchain)" >> $GITHUB_ENV
 
     - name: Restore cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         path: |
           ${{ github.workspace }}/openwrt/staging_dir/host*
