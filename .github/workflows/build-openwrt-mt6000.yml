@@ -31,7 +31,7 @@ env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: v23.05.3
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: mt6000-snapshot.config
+  CONFIG_FILE: mt6000.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: true
