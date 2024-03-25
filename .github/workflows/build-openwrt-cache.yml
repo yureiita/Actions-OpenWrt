@@ -167,7 +167,7 @@ jobs:
           ${{ github.workspace }}/openwrt/staging_dir/host*
           ${{ github.workspace }}/openwrt/staging_dir/tool*
           ${{ github.workspace }}/openwrt/.ccache
-        key: ${{ steps.restore-cache.outputs.cache-primary-key }}
+        key: ${{ env.CACHE_KEY }}
 
     - name: Check space usage
       if: (!cancelled())
