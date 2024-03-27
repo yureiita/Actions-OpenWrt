@@ -163,13 +163,13 @@ jobs:
 
     # overwrite cache key: delete previous and save current
     - name: Delete Previous Cache
-      if: ${{ steps.restore-cache.outputs.cache-hit }}
+      if: always() && steps.restore-cache.outputs.cache-hit
       continue-on-error: true
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh extension install actions/gh-actions-cache
-        gh actions-cache delete "${{ steps.restore-cache.outputs.cache-primary-key }}" --confirm
+        gh actions-cache delete "${{ steps.restore-cache.outputs.cache-matched-key }}" --confirm
 
     - name: Save cache
       uses: actions/cache/save@v4
