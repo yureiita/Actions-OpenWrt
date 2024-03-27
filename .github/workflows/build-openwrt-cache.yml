@@ -151,6 +151,7 @@ jobs:
 
     # overwrite cache key: delete previous and save current
     - name: Delete Previous Cache
+      if: steps.restore-cache.outputs.cache-primary-key == env.CACHE_KEY
       continue-on-error: true
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
