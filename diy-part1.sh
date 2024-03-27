@@ -18,4 +18,4 @@
 #echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >>feeds.conf.default
 
 # Clean build environment
-make dirclean
+# make distclean
