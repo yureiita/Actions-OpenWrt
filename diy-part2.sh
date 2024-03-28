@@ -17,3 +17,7 @@
 # cd package
 # git clone https://github.com/jerrykuku/luci-theme-argon.git
 # git clone https://github.com/jerrykuku/luci-app-argon-config.git
+
+# patch for libfring which causes build to fail https://github.com/openwrt/packages/issues/23621
+mkdir -p feeds/packages/libs/libpfring/patches/
+[ -e $GITHUB_WORKSPACE/999-issue-23621.patch ] && cp $GITHUB_WORKSPACE/999-issue-23621.patch feeds/packages/libs/libpfring/patches/
