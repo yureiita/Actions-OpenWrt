@@ -21,5 +21,12 @@
 # make distclean
 
 # patch for libfring which causes build to fail https://github.com/openwrt/packages/issues/23621
+echo "ls"
+ls
+echo "ls feeds/packages/libs/libpfring/patches"
+ls feeds/packages/libs/libpfring/patches
 mkdir -p feeds/packages/libs/libpfring/patches/
-[ -e $GITHUB_WORKSPACE/999-issue-23621.patch ] && mv $GITHUB_WORKSPACE/999-issue-23621.patch feeds/packages/libs/libpfring/patches/
+[ -e $GITHUB_WORKSPACE/999-issue-23621.patch ] && cp $GITHUB_WORKSPACE/999-issue-23621.patch feeds/packages/libs/libpfring/patches/
+echo "ls feeds/packages/libs/libpfring/patches"
+ls feeds/packages/libs/libpfring/patches/
+cat feeds/packages/libs/libpfring/patches/999-issue-23621.patch
