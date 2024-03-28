@@ -36,7 +36,7 @@ jobs:
       run: |
         echo "Warning⚠"
         echo "The assigned server has limited performance. If you select too many plug-ins, be sure to pay attention to the CPU performance!"
-        echo -e "Known CPU models (in descending order): 8370C, 8272CL, 8171M, E5-2673\n"
+        echo -e "Known CPU models (in descending order): 7763, 8370C, 8272CL, 8171M, E5-2673\n"
         echo "--------------------------CPU information--------------------------"
         echo "Physical number of CPUs: $(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
         echo -e "CPU core information: $(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
