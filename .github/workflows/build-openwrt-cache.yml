@@ -17,10 +17,10 @@ on:
       config-file:
         description: 'Config file'
         required: false
-        default: 'm4a-snapshot'
+        default: 'm4a'
       repo-branch:
         description: 'Repo branch'
-        required: false
+        required: true
         default: 'openwrt-23.05'
       clean-cache:
         description: 'Clean cache'
@@ -35,7 +35,7 @@ env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: ${{ github.event.inputs.repo-branch || 'openwrt-23.05' }}
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: ${{ github.event.inputs.config-file || 'm4a-snapshot' }}.config
+  CONFIG_FILE: ${{ github.event.inputs.config-file || 'm4a' }}.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   TZ: Asia/Brunei

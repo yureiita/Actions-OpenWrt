@@ -14,26 +14,26 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
+      repo-branch:
+        description: 'Repo branch'
+        required: true
+        default: 'openwrt-23.05'
       clean-cache:
         description: 'Clean cache'
-        required: false
-        default: 'false'
-      skip-toolchain:
-        description: 'Skip the compilation of toolchain'
         required: false
         default: 'false'
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt.git
-  REPO_BRANCH: v23.05.3
+  REPO_BRANCH: ${{ github.event.inputs.repo-branch }}
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: m4a.config
+  CONFIG_FILE: m4a${{ github.event.inputs.repo-branch == 'main' && '-snapshot' || '' }}.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
-  RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit 23.05.3 from https://github.com/openwrt/openwrt/tree/v23.05.3."
+  RELEASE_DEVICE: "Xiaomi Mi 4a Gigabit ${{ github.event.inputs.repo-branch == 'main' && 'SNAPSHOT' || github.event.inputs.repo-branch }} from https://github.com/openwrt/openwrt/tree/${{ github.event.inputs.repo-branch }}."
   RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-mbedtls, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, curl, nano, usteer."
   TZ: Asia/Brunei
 
@@ -98,13 +98,6 @@ jobs:
         restore-keys: |
           cache-openwrt-
 
-    - name: Skip toolchain
-      if: github.event.inputs.skip-toolchain == 'true' && !cancelled()
-      run: |
-        cd openwrt
-        sed -i 's/ $(tool.*\/stamp-compile)//;' Makefile
-        sed -i 's/ $(tool.*\/stamp-install)//;' Makefile
-
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
@@ -122,6 +115,11 @@ jobs:
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        if [[ $REPO_BRANCH =~ ^"v" ]]; then
+          sed -i "s/SNAPSHOT/$(echo ${REPO_BRANCH/"v"})/" openwrt/.config
+        elif [[ $REPO_BRANCH =~ ^"openwrt-" ]]; then
+          sed -i "s/\(SNAPSHOT\)/$(echo ${REPO_BRANCH/"openwrt-"})-\1/" openwrt/.config
+        fi
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
