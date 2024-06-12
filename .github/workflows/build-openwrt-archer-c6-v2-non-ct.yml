@@ -27,13 +27,13 @@ env:
   REPO_URL: https://github.com/openwrt/openwrt.git
   REPO_BRANCH: ${{ github.event.inputs.repo-branch }}
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: archer-c6-v2-non-ct${{ github.event.inputs.repo-branch == 'main' && '-snapshot' || '' }}.config
+  CONFIG_FILE: archer-c6-v2-non-ct${{ contains(fromJSON('["main", "master"]'), github.event.inputs.repo-branch) && '-snapshot' || '' }}.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
-  RELEASE_DEVICE: "Archer C6 v2 ${{ github.event.inputs.repo-branch == 'main' && 'SNAPSHOT' || github.event.inputs.repo-branch }} from https://github.com/openwrt/openwrt/tree/${{ github.event.inputs.repo-branch }}."
+  RELEASE_DEVICE: Archer C6 v2 ${{ contains(fromJSON('["main", "master"]'), github.event.inputs.repo-branch) && 'SNAPSHOT' || startsWith(github.event.inputs.repo-branch, 'openwrt-') && format('{0}-SNAPSHOT', github.event.inputs.repo-branch) || github.event.inputs.repo-branch }} from https://github.com/openwrt/openwrt/tree/${{ github.event.inputs.repo-branch }}.
   RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-mbedtls, ath10k-firmware-qca9888, usteer."
   TZ: Asia/Brunei
 
@@ -117,6 +117,7 @@ jobs:
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         if [[ $REPO_BRANCH =~ ^"v" ]]; then
           sed -i "s/SNAPSHOT/$(echo ${REPO_BRANCH/"v"})/" openwrt/.config
+          sed -i '/CONFIG_VERSION_CODE_FILENAMES=y/d' openwrt/.config
         elif [[ $REPO_BRANCH =~ ^"openwrt-" ]]; then
           sed -i "s/\(SNAPSHOT\)/$(echo ${REPO_BRANCH/"openwrt-"})-\1/" openwrt/.config
         fi
