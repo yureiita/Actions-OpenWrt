@@ -18,13 +18,17 @@ on:
         description: 'Repo branch'
         required: true
         default: 'openwrt-23.05'
+      repo-url:
+        description: 'Repo url'
+        required: false
+        default: 'https://github.com/openwrt/openwrt.git'
       clean-cache:
         description: 'Clean cache'
         required: false
         default: 'false'
 
 env:
-  REPO_URL: https://github.com/openwrt/openwrt.git
+  REPO_URL: ${{ github.event.inputs.repo-url || 'https://github.com/openwrt/openwrt.git' }}
   REPO_BRANCH: ${{ github.event.inputs.repo-branch }}
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: archer-c6-v2${{ contains(fromJSON('["main", "master"]'), github.event.inputs.repo-branch) && '-snapshot' || '' }}.config
