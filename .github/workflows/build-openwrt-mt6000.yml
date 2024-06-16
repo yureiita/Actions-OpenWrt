@@ -31,7 +31,7 @@ env:
   REPO_URL: ${{ github.event.inputs.repo-url || 'https://github.com/openwrt/openwrt' }}.git
   REPO_BRANCH: ${{ github.event.inputs.repo-branch }}
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: mt6000${{ contains(fromJSON('["main", "master"]'), github.event.inputs.repo-branch) && '-snapshot' || '' }}.config
+  CONFIG_FILE: mt6000${{ contains(fromJSON('["main", "master"]'), github.event.inputs.repo-branch) && '-snapshot' || startsWith( github.event.inputs.repo-branch, 'next-' ) && '-snapshot' || '' }}.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: true
@@ -39,7 +39,7 @@ env:
   UPLOAD_COWTRANSFER: false
   UPLOAD_WETRANSFER: false
   UPLOAD_RELEASE: true
-  RELEASE_DEVICE: GL-iNet GL-MT6000 ${{ contains(fromJSON('["main", "master"]'), github.event.inputs.repo-branch) && 'SNAPSHOT' || startsWith(github.event.inputs.repo-branch, 'openwrt-') && format('{0}-SNAPSHOT', github.event.inputs.repo-branch) || github.event.inputs.repo-branch }} from ${{ github.event.inputs.repo-url || 'https://github.com/openwrt/openwrt' }}/tree/${{ github.event.inputs.repo-branch }}.
+  RELEASE_DEVICE: GL-iNet GL-MT6000 ${{ contains(fromJSON('["main", "master"]'), github.event.inputs.repo-branch) && 'SNAPSHOT' || startsWith(github.event.inputs.repo-branch, 'openwrt-') && format('{0}-SNAPSHOT', github.event.inputs.repo-branch) || startsWith( github.event.inputs.repo-branch, 'next-' ) && 'SNAPSHOT' || github.event.inputs.repo-branch }} from ${{ github.event.inputs.repo-url || 'https://github.com/openwrt/openwrt' }}/tree/${{ github.event.inputs.repo-branch }}.
   RELEASE_PACKAGE: "Packages included: luci-ssl, wpad-mbedtls, https-dns-proxy, irqbalance, nlbwmon, sqm, statistics, curl, nano, usteer."
   TZ: Asia/Brunei
 
