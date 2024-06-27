@@ -20,19 +20,19 @@ on:
         default: 'm4a'
       repo-branch:
         description: 'Repo branch'
-        required: true
+        required: false
         default: 'openwrt-23.05'
+      repo-url:
+        description: 'Repo url'
+        required: false
+        default: 'https://github.com/openwrt/openwrt'
       clean-cache:
         description: 'Clean cache'
         required: false
         default: 'false'
-      skip-toolchain:
-        description: 'Skip the compilation of toolchain'
-        required: false
-        default: 'false'
 
 env:
-  REPO_URL: https://github.com/openwrt/openwrt.git
+  REPO_URL: ${{ github.event.inputs.repo-url || 'https://github.com/openwrt/openwrt' }}.git
   REPO_BRANCH: ${{ github.event.inputs.repo-branch || 'openwrt-23.05' }}
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: ${{ github.event.inputs.config-file || 'm4a' }}.config
@@ -100,13 +100,6 @@ jobs:
         key: ${{ env.CACHE_KEY }}
         restore-keys: |
           cache-openwrt-
-
-    - name: Skip toolchain
-      if: github.event.inputs.skip-toolchain == 'true' && !cancelled()
-      run: |
-        cd openwrt
-        sed -i 's/ $(tool.*\/stamp-compile)//;' Makefile
-        sed -i 's/ $(tool.*\/stamp-install)//;' Makefile
 
     - name: Load custom feeds
       run: |
