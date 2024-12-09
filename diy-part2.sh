@@ -20,10 +20,10 @@
 
 # patch for libfring which causes build to fail https://github.com/openwrt/packages/issues/23621
 if [[ "$REPO_BRANCH" == "v23.05.3" ]]; then
-[ -e "$GITHUB_WORKSPACE"/patches/999-issue-23621.patch ] && mkdir -p feeds/packages/libs/libpfring/patches/ && cp "$GITHUB_WORKSPACE"/patches/999-issue-23621.patch feeds/packages/libs/libpfring/patches/
+[ -e "$GITHUB_WORKSPACE"/patches/999-issue-23621.patch ] && mkdir -p feeds/packages/libs/libpfring/patches/ && cp "$GITHUB_WORKSPACE"/patches/999-issue-23621.patch "$_"
 fi
 
 # copy Archer C6 V2 BDF
 if [[ "$CONFIG_FILE" =~ ^"archer-c6-v2" ]]; then
-[ -e "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin ] && mkdir -p files/lib/firmware/ath10k/QCA9888/hw2.0/ && cp "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin files/lib/firmware/ath10k/QCA9888/hw2.0/
+[ -e "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin ] && mkdir -p files/lib/firmware/ath10k/QCA9888/hw2.0/ && cp "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin "$_"
 fi
