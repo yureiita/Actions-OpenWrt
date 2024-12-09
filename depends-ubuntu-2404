@@ -1,0 +1,1 @@
+bison build-essential ccache clang file flex g++ g++-multilib gawk gcc-multilib gettext git libncurses5-dev libssl-dev python3-setuptools rsync swig unzip wget zlib1g-dev
