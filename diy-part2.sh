@@ -20,5 +20,5 @@
 
 # patch for libfring which causes build to fail https://github.com/openwrt/packages/issues/23621
 if [[ "$REPO_BRANCH" == "v23.05.3" ]]; then
-[ -e "$GITHUB_WORKSPACE"/999-issue-23621.patch ] && mkdir -p feeds/packages/libs/libpfring/patches/ && cp "$GITHUB_WORKSPACE"/999-issue-23621.patch feeds/packages/libs/libpfring/patches/
+[ -e "$GITHUB_WORKSPACE"/patches/999-issue-23621.patch ] && mkdir -p feeds/packages/libs/libpfring/patches/ && cp "$GITHUB_WORKSPACE"/patches/999-issue-23621.patch feeds/packages/libs/libpfring/patches/
 fi
