@@ -27,3 +27,10 @@ fi
 if [[ "$CONFIG_FILE" =~ ^"archer-c6-v2" ]]; then
     [ -e "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin ] && mkdir -p files/lib/firmware/ath10k/QCA9888/hw2.0/ && cp "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin "$_"
 fi
+
+if [[ $REPO_BRANCH =~ ^"v" ]]; then
+    sed -i "s/SNAPSHOT/${REPO_BRANCH/"v"}/" .config
+    sed -i '/CONFIG_VERSION_CODE_FILENAMES=y/d' .config
+elif [[ $REPO_BRANCH =~ ^"openwrt-" ]]; then
+    sed -i "s/\(SNAPSHOT\)/${REPO_BRANCH/"openwrt-"}-\1/" .config
+fi
