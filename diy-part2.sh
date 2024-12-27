@@ -34,3 +34,8 @@ if [[ $REPO_BRANCH =~ ^"v" ]]; then
 elif [[ $REPO_BRANCH =~ ^"openwrt-" ]]; then
     sed -i "s/\(SNAPSHOT\)/${REPO_BRANCH/"openwrt-"}-\1/" .config
 fi
+
+if [[ "$REPO_BRANCH" == *"24.10"* ]]; then
+    sed -i '/CONFIG_PACKAGE_px5g-mbedtls=y/i CONFIG_PACKAGE_owut=y' .config
+    echo "RELEASE_PACKAGE=${RELEASE_PACKAGE/usteer/usteer, owut}" >> "$GITHUB_ENV"
+fi
