@@ -25,7 +25,17 @@ fi
 
 # copy Archer C6 V2 BDF
 if [[ "$CONFIG_FILE" =~ ^"archer-c6-v2" ]]; then
-    [ -e "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin ] && mkdir -p files/lib/firmware/ath10k/QCA9888/hw2.0/ && cp "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin "$_"
+    # [ -e "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin ] && mkdir -p files/lib/firmware/ath10k/QCA9888/hw2.0/ && cp "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-2.bin "$_"
+    sed -i '/tplink_eap660hd-v1 \\/a \\ttplink_archer-c6-v2 \\' package/firmware/ipq-wifi/Makefile
+    sed -i '/TP-Link EAP660 HD v1/a $(eval $(call generate-ipq-wifi-package,tplink_archer-c6-v2,TP-Link Archer C6 V2))' package/firmware/ipq-wifi/Makefile
+    sed -i 's|$$$$(wildcard $(PKG_BUILD_DIR)/board-$(1).*)|$$$$(wildcard $(PKG_BUILD_DIR)/board-$(1).*) $$$$(wildcard files/board-$(1).*)|' package/firmware/ipq-wifi/Makefile
+    cat package/firmware/ipq-wifi/Makefile
+    [ -e "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-tplink_archer-c6-v2.qca9888 ] && mkdir -p package/firmware/ipq-wifi/files/ && cp "$GITHUB_WORKSPACE"/archer-c6-v2-files/board-tplink_archer-c6-v2.qca9888 "$_"
+    ls -l package/firmware/ipq-wifi/files/
+    sed -i '/nvmem-cell-names = "pre-calibration", "mac-address";/a \\t\tqcom,ath10k-calibration-variant = "tplink_archer-c6-v2";' target/linux/ath79/dts/qca9563_tplink_archer-c6-v2.dts
+    cat target/linux/ath79/dts/qca9563_tplink_archer-c6-v2.dts
+    sed -i '/ARCHER-C6-V2$/{n;s/$/ ipq-wifi-tplink_archer-c6-v2/}' target/linux/ath79/image/generic-tp-link.mk
+    cat target/linux/ath79/image/generic-tp-link.mk
 fi
 
 if [[ $REPO_BRANCH =~ ^"v" ]]; then
